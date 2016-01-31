@@ -9,7 +9,7 @@
 #include <hase_msgs/Drive.h>
 
 #if defined USE_IMU
-#include <sensor_msgs/Imu.h>
+#include <hase_msgs/Imu.h>
 #endif
 
 // Rate at which feedback is sent
@@ -53,8 +53,8 @@ ros::NodeHandle nh; // Create the ROS node handle
 
 Ticker imu;
 
-sensor_msgs::Imu imu_msg;   // Publisher for yaw speed
-ros::Publisher pub_imu("imu", &imu_msg);
+hase_msgs::Imu imu_msg;   // Publisher for yaw speed
+ros::Publisher pub_imu("imu/data_hase", &imu_msg);
 
 double cov[9] = {0.0003, 0.0, 0.0, 0.0, 0.0003, 0.0, 0.0, 0.0, 0.0003};
 
@@ -94,35 +94,26 @@ void sendImu()
 {
   robot.updateImu();
 
-  // Fill header
-  /*imu_msg.header.frame_id = "imu";
-
-  // Fill quaternion orientation
-  imu_msg.orientation.x = 0.0; //robot.imu.q[0];
-  imu_msg.orientation.y = 0.0; //robot.imu.q[1];
-  imu_msg.orientation.z = 0.0; //robot.imu.q[2];
-  imu_msg.orientation.w = 0.0; //robot.imu.q[3];
-  imu_msg.orientation_covariance[0] = 0.0003;
-  imu_msg.orientation_covariance[4] = 0.0003;
-  imu_msg.orientation_covariance[8] = 0.0003;
+  imu_msg.header.stamp = nh.now();
 
   // Fill angular velocities
   imu_msg.angular_velocity.x = robot.getRollSpeed();
   imu_msg.angular_velocity.y = robot.getPitchSpeed();
   imu_msg.angular_velocity.z = robot.getYawSpeed();
-  imu_msg.angular_velocity_covariance[0] = 0.0003;
-  imu_msg.angular_velocity_covariance[4] = 0.0003;
-  imu_msg.angular_velocity_covariance[8] = 0.0003;
 
   // Fill linear accelerations
   imu_msg.linear_acceleration.x = robot.getXAccel();
   imu_msg.linear_acceleration.y = robot.getYAccel();
   imu_msg.linear_acceleration.z = robot.getZAccel();
-  imu_msg.linear_acceleration_covariance[0] = 0.0003;
-  imu_msg.linear_acceleration_covariance[4] = 0.0003;
-  imu_msg.linear_acceleration_covariance[8] = 0.0003;
 
-  pub_imu.publish(&imu_msg);*/
+#if defined TARGET_PAC_F401RB
+  // Fill magnetic field
+  imu_msg.magnetic_field.x = robot.getXMagnetometer();
+  imu_msg.magnetic_field.y = robot.getYMagnetometer();
+  imu_msg.magnetic_field.z = robot.getZMagnetometer();
+#endif
+
+  pub_imu.publish(&imu_msg);
 }
 #endif // USE_IMU
 #endif // MBED_HASE_ROS_H

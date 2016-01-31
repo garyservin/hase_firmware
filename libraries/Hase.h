@@ -72,6 +72,8 @@
 //#define INFO_ENABLED
 #define DEBUG_BAUDRATE    57600
 
+#define G_TO_MS2    9.80665f    // g's to m/s^2
+#define DPS_TO_RPS  0.0174533f  // degrees/second to radians/second
 
 class Hase
 {
@@ -273,19 +275,19 @@ public:
    *
    * @return float with the x magnetic field
    */
-  float getXMagetometer();
+  float getXMagnetometer();
 
   /** Get y magnetometer from IMU
    *
    * @return float with the y magnetic field
    */
-  float getYMagetometer();
+  float getYMagnetometer();
 
   /** Get z magnetometer from IMU
    *
    * @return float with the z magnetic field
    */
-  float getZMagetometer();
+  float getZMagnetometer();
 #endif
 #endif
 

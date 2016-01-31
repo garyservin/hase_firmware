@@ -42,15 +42,13 @@ Hase::Hase():
   _rmotor.speed(0.0);
 
 #if defined USE_IMU && defined TARGET_PAC_F401RB
-  _imu.set_gyro_scale(BITS_FS_2000DPS);
+  _imu.set_gyro_scale(BITS_FS_250DPS);
   wait(0.1);
-  _imu.set_acc_scale(BITS_FS_16G);
+  _imu.set_acc_scale(BITS_FS_2G);
   wait(0.1);
   _imu.AK8963_calib_Magnetometer();
   wait(0.1);
 #endif
-
-  wait(0.2);
 
   _readEncoderTicker.attach(this, &Hase::readEncoder, PID_INTERVAL);
   _sysLedTicker.attach(this, &Hase::sysBlink, SYSLED_INTERVAL);
@@ -319,7 +317,7 @@ void Hase::updateImu()
 float Hase::getXAccel()
 {
 #if defined TARGET_PAC_F401RB
-  return _imu.accelerometer_data[0];
+  return _imu.accelerometer_data[0] * G_TO_MS2;
 #else
   return _imu.ax;
 #endif
@@ -328,7 +326,7 @@ float Hase::getXAccel()
 float Hase::getYAccel()
 {
 #if defined TARGET_PAC_F401RB
-  return _imu.accelerometer_data[1];
+  return _imu.accelerometer_data[1] * G_TO_MS2;
 #else
   return _imu.ay;
 #endif
@@ -337,7 +335,7 @@ float Hase::getYAccel()
 float Hase::getZAccel()
 {
 #if defined TARGET_PAC_F401RB
-  return _imu.accelerometer_data[2];
+  return _imu.accelerometer_data[2] * G_TO_MS2;
 #else
   return _imu.az;
 #endif
@@ -346,7 +344,7 @@ float Hase::getZAccel()
 float Hase::getRollSpeed()
 {
 #if defined TARGET_PAC_F401RB
-  return _imu.gyroscope_data[0];
+  return _imu.gyroscope_data[0] * DPS_TO_RPS;
 #else
   return _imu.gx;
 #endif
@@ -355,7 +353,7 @@ float Hase::getRollSpeed()
 float Hase::getPitchSpeed()
 {
 #if defined TARGET_PAC_F401RB
-  return _imu.gyroscope_data[1];
+  return _imu.gyroscope_data[1] * DPS_TO_RPS;
 #else
   return _imu.gy;
 #endif
@@ -364,7 +362,7 @@ float Hase::getPitchSpeed()
 float Hase::getYawSpeed()
 {
 #if defined TARGET_PAC_F401RB
-  return _imu.gyroscope_data[2];
+  return _imu.gyroscope_data[2] * DPS_TO_RPS;
 #else
   return _imu.gz;
 #endif
@@ -380,17 +378,17 @@ float Hase::getTemperature()
 }
 
 #if defined TARGET_PAC_F401RB
-float Hase::getXMagetometer()
+float Hase::getXMagnetometer()
 {
   return _imu.Magnetometer[0];
 }
 
-float Hase::getYMagetometer()
+float Hase::getYMagnetometer()
 {
   return _imu.Magnetometer[1];
 }
 
-float Hase::getZMagetometer()
+float Hase::getZMagnetometer()
 {
   return _imu.Magnetometer[2];
 }
